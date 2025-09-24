@@ -1,25 +1,15 @@
-# Указываем базовый образ с нужной версией Python
-FROM python:3.9-slim-buster
+# Используем базовый образ Python
+FROM python:3.11-slim-buster
 
-# Устанавливаем переменные окружения
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /code
 
-# Создаем рабочую директорию
-WORKDIR /app
-
-# Копируем файл с зависимостями
-COPY requirements.txt /app/
-
-# Устанавливаем зависимости
+# Копируем файлы requirements.txt и pip.conf внутрь контейнера
+COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем остальной код приложения
-COPY . /app/
-
-# Выставляем порт, который будет слушать Django приложение
+# Копируем исходники приложения внутрь контейнера
+COPY . .
 EXPOSE 8000
-
-# Команда для запуска сервера Django (например, для локальной разработки)
-# Для продакшена лучше использовать Gunicorn или uWSGI
+# Запуск сервера разработки Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
